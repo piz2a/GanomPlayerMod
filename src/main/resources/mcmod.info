@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ganomplayerclient",
+  "name": "GanomPlayer Client",
+  "description": "AI Client for GanomPlayer",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["piz2a"],
+  "credits": "piz2a",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
