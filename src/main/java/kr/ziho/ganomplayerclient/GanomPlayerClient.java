@@ -101,8 +101,7 @@ public class GanomPlayerClient {
                     while (count <= framesInTimeline) {
                         if (System.currentTimeMillis() >= startTime + frameInterval * count) {
                             // Make AI behave
-                            if (doBehave)
-                                behave((JsonObject) frames.get(count - 1));
+                            if (doBehave) behave((JsonObject) frames.get(count - 1));
                             count++;
                         }
                     }
