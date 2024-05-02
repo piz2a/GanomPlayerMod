@@ -18,6 +18,9 @@ import com.google.gson.JsonParser;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.ClientCommandHandler;
 
@@ -32,6 +35,8 @@ public class GanomPlayerClient {
     
     public static final int framesInTimeline = 10;
     public static final int frameInterval = 100;  // microseconds
+
+	public static final int inventorySlot = 0;
 	
     private Socket socket;
     private SocketAddress address;
@@ -62,8 +67,39 @@ public class GanomPlayerClient {
     	running = false;
     }
     
-    public void behave(JsonObject jsonObj) {
+    public void behave(EntityPlayerSP player, JsonObject jsonObject) {
+        // Sneaking & Sprinting
+    	player.setSneaking(jsonObject.get("sneaking").getAsBoolean());
+    	player.setSprinting(jsonObject.get("sprinting").getAsBoolean());
     	
+    	// Item in hand
+        player.replaceItemInInventory(inventorySlot, ItemLimited.from(jsonObject.get("itemInHand").getAsInt()).toItemStack());
+        
+        // Jump
+        if (jsonObject.get("jump").getAsBoolean()) {
+        	player.jump();
+        }
+        
+        // WASD
+        GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
+        int forward = gameSettings.keyBindForward.getKeyCode();
+    	int left = gameSettings.keyBindLeft.getKeyCode();
+    	int back = gameSettings.keyBindBack.getKeyCode();
+    	int right = gameSettings.keyBindRight.getKeyCode();
+    	int[] keyCodes = {forward, left, back, right};
+    	for (int i = 0; i < 4; i++) {
+    		KeyBinding.setKeyBindState(
+    			keyCodes[i],
+    			jsonObject.get("key").getAsJsonArray().get(i).getAsBoolean()
+    		);
+    	}
+
+        // Rotation + Head Rotation
+        JsonArray rotationArray = jsonObject.get("rotation").getAsJsonArray();
+        float yaw = rotationArray.get(3).getAsFloat();
+        float pitch = rotationArray.get(4).getAsFloat();
+        BlockPos pos = player.getPosition();
+        player.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), yaw, pitch);
     }
 	
 	private class SocketThread implements Runnable {
@@ -101,7 +137,7 @@ public class GanomPlayerClient {
                     while (count <= framesInTimeline) {
                         if (System.currentTimeMillis() >= startTime + frameInterval * count) {
                             // Make AI behave
-                            if (doBehave) behave((JsonObject) frames.get(count - 1));
+                            if (doBehave) behave(player, (JsonObject) frames.get(count - 1));
                             count++;
                         }
                     }
