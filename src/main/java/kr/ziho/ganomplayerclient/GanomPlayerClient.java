@@ -48,15 +48,6 @@ public class GanomPlayerClient {
     }
     
     public void connect() {
-    	socket = new Socket();
-        address = new InetSocketAddress(GanomPlayerClient.HOST, GanomPlayerClient.PORT);
-        try {
-        	socket.connect(address);
-        } catch (IOException e) {
-        	String errorMessage = "\u00A7c[GanomPlayerClient] Socket connection failure";
-        	Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(errorMessage));
-        }
-
         Thread socketThread = new Thread(new SocketThread());
         socketThread.start();
         String successMessage = "\u00A7a[GanomPlayerClient] Socket thread is now running";
@@ -105,6 +96,17 @@ public class GanomPlayerClient {
 	private class SocketThread implements Runnable {
 		@Override
 		public void run() {
+			Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText("thread"));
+			socket = new Socket();
+	        address = new InetSocketAddress(GanomPlayerClient.HOST, GanomPlayerClient.PORT);
+	        try {
+	        	socket.connect(address);
+	        } catch (IOException e) {
+	        	String errorMessage = "\u00A7c[GanomPlayerClient] Socket connection failure";
+	        	Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(errorMessage));
+	        	return;
+	        }
+			
 			running = true;
 			try {
 				InputStream in = socket.getInputStream();
