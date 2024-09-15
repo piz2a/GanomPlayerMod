@@ -40,7 +40,7 @@ public class ClientCommand implements ICommand {
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		if (args[0].equals("connect") || args[0].equals("c")) {
-			mod.connect();
+			mod.connect(Integer.parseInt(args[1]));
 		} else if (args[0].equals("disconnect") || args[0].equals("dc")) {
 			mod.disconnect();
 		}
