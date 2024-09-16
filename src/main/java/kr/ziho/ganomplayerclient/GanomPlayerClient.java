@@ -21,6 +21,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.ClientCommandHandler;
 
+import org.lwjgl.input.Keyboard;
+
 @Mod(modid = GanomPlayerClient.MODID, version = GanomPlayerClient.VERSION)
 public class GanomPlayerClient {
 	
@@ -40,7 +42,7 @@ public class GanomPlayerClient {
     @EventHandler
     public void init(FMLInitializationEvent event) {
     	ClientCommandHandler.instance.registerCommand(new ClientCommand(this));
-        MinecraftForge.EVENT_BUS.register(new GanomEventHandler());
+        // MinecraftForge.EVENT_BUS.register(new GanomEventHandler());
     }
     
     public void connect(int port) {
@@ -55,34 +57,6 @@ public class GanomPlayerClient {
     }
     
     public void behave(EntityPlayerSP player, JsonObject jsonObject) {
-        /*
-        // Sneaking & Sprinting
-    	player.setSneaking(jsonObject.get("sneaking").getAsBoolean());
-    	player.setSprinting(jsonObject.get("sprinting").getAsBoolean());
-    	
-    	// Item in hand
-        player.replaceItemInInventory(inventorySlot, ItemLimited.from(jsonObject.get("itemInHand").getAsInt()).toItemStack());
-        
-        // Jump
-        if (jsonObject.get("jump").getAsBoolean()) {
-        	player.jump();
-        }
-        
-        // WASD
-        GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
-        int forward = gameSettings.keyBindForward.getKeyCode();
-    	int left = gameSettings.keyBindLeft.getKeyCode();
-    	int back = gameSettings.keyBindBack.getKeyCode();
-    	int right = gameSettings.keyBindRight.getKeyCode();
-    	int[] keyCodes = {forward, left, back, right};
-    	for (int i = 0; i < 4; i++) {
-    		KeyBinding.setKeyBindState(
-    			keyCodes[i],
-    			jsonObject.get("key").getAsJsonArray().get(i).getAsBoolean()
-    		);
-    	}
-         */
-
         // WASD key press
         float strafe, forward;  // Initialization required
         strafe = jsonObject.get("strafe").getAsFloat();
@@ -97,6 +71,17 @@ public class GanomPlayerClient {
         BlockPos pos = player.getPosition();
         player.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), yaw, pitch);
         */
+    }
+
+    public String keylog() {
+        String result = "";
+
+        result += Keyboard.isKeyDown(Keyboard.KEY_W) ? "1" : "0";
+        result += Keyboard.isKeyDown(Keyboard.KEY_A) ? "1" : "0";
+        result += Keyboard.isKeyDown(Keyboard.KEY_S) ? "1" : "0";
+        result += Keyboard.isKeyDown(Keyboard.KEY_D) ? "1" : "0";
+
+        return "1001";
     }
 	
 	private class SocketThread implements Runnable {
@@ -127,10 +112,17 @@ public class GanomPlayerClient {
                     while (running) {
                         String line = reader.hasNextLine() ? reader.nextLine() : null;
                         if (line.equals("keylog")) {  // informs what key the player is pressing
-                            // writer.println(new Date().toString());
+                            String log = keylog();
+                            System.out.println(log);
+                            writer.println(log);
                         } else {
                             JsonObject receivedJson = (JsonObject) new JsonParser().parse(line);
                             behave(Minecraft.getMinecraft().thePlayer, receivedJson);
+                        }
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }

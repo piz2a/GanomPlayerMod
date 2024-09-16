@@ -11,7 +11,7 @@ public class ClientCommand implements ICommand {
 
 	GanomPlayerClient mod;
 	String name = "gc";
-	String usage = EnumChatFormatting.RED + "Usage: /" + name;
+	String usage = EnumChatFormatting.RED + "Usage: /" + name + " connect(c) <port> | /" + name + " disconnect(dc)";
 	
 	public ClientCommand(GanomPlayerClient mod) {
 		this.mod = mod;
