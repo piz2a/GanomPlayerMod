@@ -76,12 +76,13 @@ public class GanomPlayerClient {
     public String keylog() {
         String result = "";
 
+        result += Keyboard.isKeyDown(Keyboard.KEY_SPACE) ? "1" : "0";
         result += Keyboard.isKeyDown(Keyboard.KEY_W) ? "1" : "0";
         result += Keyboard.isKeyDown(Keyboard.KEY_A) ? "1" : "0";
         result += Keyboard.isKeyDown(Keyboard.KEY_S) ? "1" : "0";
         result += Keyboard.isKeyDown(Keyboard.KEY_D) ? "1" : "0";
 
-        return "1001";
+        return result;
     }
 	
 	private class SocketThread implements Runnable {
