@@ -36,7 +36,7 @@ public class GanomPlayerClient {
 
 	public static final int inventorySlot = 0;
 
-    private ServerSocket serverSocket;
+    private ServerSocket serverSocket = null;
     private boolean running = false;
     
     @EventHandler
@@ -53,6 +53,13 @@ public class GanomPlayerClient {
     }
     
     public void disconnect() {
+        String successMessage = "\u00A7a[GanomPlayerClient] Socket thread stopped";
+        Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(successMessage));
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     	running = false;
     }
     
@@ -98,6 +105,7 @@ public class GanomPlayerClient {
 		public void run() {
 			Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText("thread"));
 			try {
+                if (serverSocket != null) serverSocket.close();
                 serverSocket = new ServerSocket(port);
                 String listeningMessage = "\u00A7a[GanomPlayerClient] Socket Server is listening on port " + port;
                 Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(listeningMessage));
@@ -129,6 +137,7 @@ public class GanomPlayerClient {
                     }
                 }
             } catch (IOException e) {
+                e.printStackTrace();
 	        	String errorMessage = "\u00A7c[GanomPlayerClient] Socket connection failure";
 	        	Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(errorMessage));
 	        	return;
