@@ -112,6 +112,7 @@ public class GanomPlayerClient {
 
                     while (running) {
                         String line = reader.hasNextLine() ? reader.nextLine() : null;
+                        if (line == null) continue;
                         if (line.equals("keylog")) {  // informs what key the player is pressing
                             String log = keylog();
                             System.out.println(log);
