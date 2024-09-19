@@ -65,9 +65,15 @@ public class GanomPlayerClient {
     
     public void behave(EntityPlayerSP player, JsonObject jsonObject) {
         // WASD key press
-        float strafe, forward;  // Initialization required
-        strafe = jsonObject.get("strafe").getAsFloat();
-        forward = jsonObject.get("forward").getAsFloat();
+        float strafe = jsonObject.get("ADmove").getAsFloat();
+        float forward = jsonObject.get("WSmove").getAsFloat();
+        float dyaw = jsonObject.get("DelYaw").getAsFloat();
+        float dpitch = jsonObject.get("DelPitch").getAsFloat();
+        System.out.println("strafe " + strafe + " forward " + forward);
+        System.out.println("dyaw " + dyaw + " dpitch " + dpitch);
+        // player.setRotation(player.rotationYaw + dyaw, player.rotationPitch + dpitch);
+        player.rotationYaw += dyaw;
+        player.rotationPitch += dpitch;
         player.moveEntityWithHeading(strafe, forward);
 
         /*
